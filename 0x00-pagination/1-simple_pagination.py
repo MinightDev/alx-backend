@@ -1,9 +1,25 @@
 #!/usr/bin/env python3
+"""Write a function named index_range that takes two integer
+arguments page and page_size.
+
+The function should return a tuple of size two containing a
+start index and an end index corresponding to the range of
+indexes to return in a list for those particular pagination
+parameters.
+
+Page numbers are 1-indexed, i.e. the first page is page 1.
 """
-Adds `get_page` method to `Server` class
-"""
+
+from typing import Tuple, List
 import csv
-from typing import List, Tuple
+import math
+
+
+def index_range(page: int, page_size: int) -> Tuple[int, int]:
+    """
+    start index and an end index corresponding to the range of
+    """
+    return ((page-1) * page_size, page_size * page)
 
 
 class Server:
@@ -25,23 +41,15 @@ class Server:
 
         return self.__dataset
 
-    @staticmethod
-    def index_range(page: int, page_size: int) -> Tuple[int, int]:
-        """Calculate start and end index range for a `page`, with `page_size`
-        """
-        nextPageStartIndex = page * page_size
-        return nextPageStartIndex - page_size, nextPageStartIndex
-
     def get_page(self, page: int = 1, page_size: int = 10) -> List[List]:
-        """
-        Get items for the given page number
-        Args:
-            page (int): page number
-            page_size (int): number of items per page
-        Returns:
-            (List[List]): a list of list(row) if inputs are within range
-            ([]) : an empty list if page and page_size are out of range
-        """
-        assert type(page) == int and type(page_size) == int
-        assert page > 0 and page_size > 0
-        startIndex, endIndex = self.index_range(page, page_size)
+        """return the appropriate page of the dataset"""
+        assert type(page) is int and page > 0
+        assert type(page_size) is int and page_size > 0
+
+        data = self.dataset()
+
+        try:
+            start, end = index_range(page, page_size)
+            return data[start:end]
+        except IndexError:
+            return []
